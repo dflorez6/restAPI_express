@@ -22,19 +22,29 @@ app.use(express.urlencoded({ extended: true }));
 //====================
 // Data & Logic - Custom Modules
 //====================
-const dbFakeData = require('./logic/dbFakeData.js');
-const usersData = dbFakeData.usersData();
-let messagesData = dbFakeData.messagesData(); // Must be a variable and not a constant
+let models = require('./models');
+const users = models.users;
+let messages = models.messages; // Must be a variable and not a constant
 
-// TODO: This is temporary
-//====================
-// Pseudo Authenticated User
-//====================
 // .use() - This method is part of Express Middleware, defines a layer that sits on top of all the other RESTful types
 app.use(
     (req, res, next) => {
         const authUserId = 1;
-        req.me = usersData[authUserId];
+        // TODO: Using req.context allows to pass the values to all the routes and then I can move the routes to other folders without breaking anything
+        // You don't need necessarily the context object as a container, but I found it a good practice to keep 
+        // everything that is passed to the routes at one place
+        req.context = {
+            models,
+            me: users[authUserId]
+        }
+        // To use req.context: 
+        // e.g. to get all users -> req.context.models.users
+        // e.g. to get authenticated user -> req.context.models.users[req.context.me.id]
+
+        //--------------------
+        // Pseudo Authenticated User
+        //--------------------
+        req.me = users[authUserId];        
         next();
     }
 );
@@ -64,7 +74,7 @@ app.get('/',
 app.get('/session', 
     // Return Function
     (req, res) => {        
-        return res.send(usersData[req.me.id]);
+        return res.send(req.context.models.users[req.context.me.id]);
     }
 );
 
@@ -76,7 +86,7 @@ app.get('/session',
 app.get('/users', 
     // Return Function
     (req, res) => {
-        return res.send(Object.values(usersData)); // Returns the object values from the custom module
+        return res.send(Object.values(req.context.models.users)); // Returns the object values from the Models
     }
 );
 
@@ -84,7 +94,7 @@ app.get('/users',
 app.get('/users/:userId',
     // Return Function
     (req, res) => {
-        return res.send(usersData[req.params.userId]); // Returns a specific user depending on the userId from the URI
+        return res.send(req.context.models.users[req.params.userId]); // Returns a specific user depending on the userId from the URI
     }
 );
 
@@ -123,7 +133,7 @@ app.delete('/users/:userId',
 app.get('/messages',
     // Return Function
     (req, res) => {
-        return res.send(Object.values(messagesData));
+        return res.send(Object.values(req.context.models.messages));
     }
 );
 
@@ -131,7 +141,7 @@ app.get('/messages',
 app.get('/messages/:messageId',
     // Return Function
     (req, res) => {
-        return res.send(messagesData[req.params.messageId]); // Returns a specific user depending on the userId from the URI
+        return res.send(req.context.models.messages[req.params.messageId]); // Returns a specific user depending on the userId from the URI
     }
 );
 
@@ -147,11 +157,11 @@ app.post('/messages',
             id,
             // Extract payload from incoming request
             text: req.body.text,
-            userId: req.me.id,
+            userId: req.context.me.id,
         }
         
-        // Assign the message by identifier in the Messages Object (comes from custom module dbFakeData.js)
-        messagesData[id] = message;
+        // Assign the message by identifier to the specific Message Object
+        req.context.models.messages[id] = message;
 
         // Return new message after it has been created
         return res.send(message);
@@ -166,13 +176,13 @@ app.put('/messages/:messageId',
         const messageId = req.params.messageId;
         
         // Updates Message Object values
-        messagesData[messageId] = {
-            id: messagesData[messageId].id,
+        messages[messageId] = {
+            id: req.context.models.messages[messageId].id,
             // Extract payload from incoming request
             text: req.body.text,
-            userId: messagesData[messageId].userId
+            userId: req.context.models.messages[messageId].userId
         }
-        
+
         return res.send(`PUT HTTP method on messages/${req.params.messageId} resource`);
     }
 );
@@ -182,10 +192,10 @@ app.put('/messages/:messageId',
 app.delete('/messages/:messageId',
     (req, res) => {
         // Here we used a dynamic object property to exclude the message we want to delete from the rest of the messages object
-        const { [req.params.messageId]: message, ...otherMessages } = messagesData;
+        const { [req.params.messageId]: message, ...otherMessages } = req.context.models.messages;
 
-        // Reassigns values inside messagesData Object with otherMessages (all the messages except the one just deleted)
-        messagesData = otherMessages;
+        // Reassigns values inside messages Object with otherMessages (all the messages except the one just deleted)
+        req.context.models.messages = otherMessages;
 
         return res.send(message);
         // return res.send(`DELETE HTTP method on messages/${req.params.messageId} resource`);
