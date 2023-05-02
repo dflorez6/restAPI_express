@@ -20,52 +20,52 @@ app.use(express.urlencoded({extended:false}));
 //====================
 // Routes
 //====================
-// 'get' root page
-// TODO: Temporarily Commented
-/*
-app.get('/', 
-// Return Function
-(req, res) => {
-    let responseData = {
-        message: 'Hello World'
-    }
-    
-    return res.send("Hello World 1!");
-    // res.send(responseData);
-}
-);
-*/
-
-// HTTP METHODS
-// 'GET'
+//--------------------
+// Root
+//--------------------
 app.get('/', 
     // Return Function
     (req, res) => {
-        return res.send("Received a GET HTTP method");
+        let responseData = {
+            message: 'Hello World'
+        }    
+        return res.send("Hello World 1!");
+        // res.send(responseData);
+    }
+);
+
+//--------------------
+// Users
+//--------------------
+// 'GET'
+app.get('/users', 
+    // Return Function
+    (req, res) => {
+        return res.send("GET HTTP method on user resource");
     }
 );
 
 // 'POST'
-app.post('/', 
+app.post('/users', 
     // Return Function
     (req, res) => {
-        return res.send("Received a POST HTTP method");
+        return res.send("POST HTTP method on user resource");
     } 
 );
 
 // 'PUT'
-app.put('/',
+app.put('/users/:userId',
     // Return Function
     (req, res) => {
-        return res.send("Received a PUT HTTP method");
+        return res.send(`PUT HTTP method on user/${req.params.userId} resource`);
     }
 );
 
 // 'DELETE'
-app.delete('/',
+app.delete('/users/:userId',
     // Return Function
     (req, res) => {
-        return res.send("Received a DELETE HTTP method");
+        return res.send(`DELETE HTTP method on user/${req.params.userId} resource`);
     }
 );
 
