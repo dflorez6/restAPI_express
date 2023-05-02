@@ -39,6 +39,35 @@ https://www.youtube.com/watch?v=PxshhOKNPpQ
     > curl -X DELETE http://localhost:3000
     > -> Received a DELETE HTTP method
 
+## Library: Unique Identifier - uuid
+* In case the app doesn't use a db and we want to generate unique identifiers, from the terminal:
+    
+    > npm install uuid
+
+* Inside index.js (server config file) add the following:
+
+        import { v4 as uuidv4 } from 'uuid';
+
+## Library: Cross-Origin Resource Sharing - CORS
+* Install from the terminal:
+    
+    > npm install cors
+
+* Inside index.js (server config file) add the following:
+
+        const cors = require('cors');
+        app.use(cors()); // To enable CORS requests on all routes
+
+* In case you want to use CORS on specific routes, inside index.js:
+
+        var cors = require('cors')
+        // Then on the route
+        app.get('/products/:id', cors(), function (req, res) {
+            res.json({msg: 'This is CORS-enabled for a Single Route'})
+        })
+        
+
+
 ## Dependencies
 * express-session
 * express-validator
