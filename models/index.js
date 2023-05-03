@@ -27,7 +27,7 @@ let messages = {
     }
 }
 
-// Export
+// Export Module
 module.exports = {
     users, 
     messages
