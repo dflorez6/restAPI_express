@@ -25,20 +25,6 @@ https://www.youtube.com/watch?v=PxshhOKNPpQ
         // Example PORT=3000 will be the ENV variable used
         process.env.PORT
 
-* To test API endpoints with cURL from the terminal:
-
-    > curl http://localhost:3000
-    > -> Received a GET HTTP method
-
-    > curl -X POST http://localhost:3000
-    > -> Received a POST HTTP method
-
-    > curl -X PUT http://localhost:3000
-    > -> Received a PUT HTTP method
-
-    > curl -X DELETE http://localhost:3000
-    > -> Received a DELETE HTTP method
-
 ## Library: Unique Identifier - uuid
 * In case the app doesn't use a db and we want to generate unique identifiers, from the terminal:
     
@@ -66,7 +52,20 @@ https://www.youtube.com/watch?v=PxshhOKNPpQ
             res.json({msg: 'This is CORS-enabled for a Single Route'})
         })
         
+## API Calls from terminal using cURL
+* To test API endpoints with cURL from the terminal:
 
+    > curl http://localhost:3000
+    > -> Received a GET HTTP method
+
+    > curl -X POST http://localhost:3000
+    > -> Received a POST HTTP method
+
+    > curl -X PUT http://localhost:3000
+    > -> Received a PUT HTTP method
+
+    > curl -X DELETE http://localhost:3000
+    > -> Received a DELETE HTTP method
 
 ## Dependencies
 * express-session
